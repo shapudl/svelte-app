@@ -6,17 +6,15 @@
 	let showIncompleteTodos = false;
 	let searchTerm = '';
 
-
 	const fetchData = async () => {
 		const response = await fetch('https://dummyjson.com/todos');
 		const data = await response.json();
 		return data.todos;
 	};
 
-
 	onMount(async () => {
-        todos = await fetchData();
-    });
+		todos = await fetchData();
+	});
 
 	$: {
 		filteredTodos = todos.filter((todo) => {
@@ -37,23 +35,17 @@
 	</label>
 </div>
 
-{#await fetchData()}
-	<p>Loading...</p>
-{:then}
-	{#if filteredTodos.length > 0}
-		<ul>
-			{#each filteredTodos as todo (todo.id)}
-				<li class:completed={todo.completed}>
-					{todo.todo}
-				</li>
-			{/each}
-		</ul>
-	{:else}
-		<p>No todos found.</p>
-	{/if}
-{:catch error}
-	<p>Error: {error.message}</p>
-{/await}
+{#if filteredTodos.length > 0}
+	<ul>
+		{#each filteredTodos as todo (todo.id)}
+			<li class:completed={todo.completed}>
+				{todo.todo}
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<p>No todos found.</p>
+{/if}
 
 <style>
 	ul {
