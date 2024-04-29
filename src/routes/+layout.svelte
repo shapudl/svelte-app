@@ -1,5 +1,5 @@
 <nav>
-	<a href="/">home</a>
+	<a href="/">Home</a>
 	<a href="/todos">Todos</a>
 </nav>
 
@@ -7,12 +7,14 @@
 
 <style>
 	:global(body) {
+        font-family: "Roboto", sans-serif;
+        text-align:center;
 		background-color: #092021;
 		color: #fff;
 		padding: 2em;
 	}
-	h1 {
-		color: #999;
-		text-align: center;
-	}
+    :global(a) {
+        text-decoration: none;
+        color: #ebecb0;
+    }
 </style>
