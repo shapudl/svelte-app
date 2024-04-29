@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 
 	let todos = [];
+	let filteredTodos = [];
+	let showIncompleteTodos = false;
+	let searchTerm = '';
 
 	onMount(async () => {
 		const response = await fetch('https://dummyjson.com/todos');
@@ -9,14 +12,31 @@
 		console.log(data.todos);
 		todos = data.todos;
 	});
+
+	$: {
+		filteredTodos = todos.filter((todo) => {
+			if (showIncompleteTodos && todo.completed) return false;
+			if (!searchTerm) return true;
+			return todo.todo.toLowerCase().includes(searchTerm.toLowerCase());
+		});
+	}
 </script>
 
+<div class="filters">
+    <div>
+        <input type="text" bind:value={searchTerm} placeholder="Search todos..." />
+    </div>
+    <label>
+        <input type="checkbox" bind:checked={showIncompleteTodos} />
+        Show only incomplete todos
+    </label>
+</div>
 
 
-{#if todos.length > 0}
+{#if filteredTodos.length > 0}
 	<ul>
-		{#each todos as todo}
-			<li class={todo.completed && 'completed'}>{todo.todo} ({todo.completed})</li>
+		{#each filteredTodos as todo}
+			<li class={todo.completed && 'completed'}>{todo.todo}</li>
 		{/each}
 	</ul>
 {:else}
@@ -29,7 +49,7 @@
 		margin: 20px 0;
 		padding: 0;
 		max-width: min(80%, 800px);
-		margin: 0 auto;
+		margin: 40px auto;
 	}
 
 	ul li {
