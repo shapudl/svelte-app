@@ -6,11 +6,17 @@
 	let showIncompleteTodos = false;
 	let searchTerm = '';
 
-	onMount(async () => {
+
+	const fetchData = async () => {
 		const response = await fetch('https://dummyjson.com/todos');
 		const data = await response.json();
-		todos = data.todos;
-	});
+		return data.todos;
+	};
+
+
+	onMount(async () => {
+        todos = await fetchData();
+    });
 
 	$: {
 		filteredTodos = todos.filter((todo) => {
@@ -22,25 +28,32 @@
 </script>
 
 <div class="filters">
-    <div>
-        <input type="text" bind:value={searchTerm} placeholder="Search todos..." />
-    </div>
-    <label>
-        <input type="checkbox" bind:checked={showIncompleteTodos} />
-        Show only incomplete todos
-    </label>
+	<div>
+		<input type="text" bind:value={searchTerm} placeholder="Search todos..." />
+	</div>
+	<label>
+		<input type="checkbox" bind:checked={showIncompleteTodos} />
+		Show only incomplete todos
+	</label>
 </div>
 
-
-{#if filteredTodos.length > 0}
-	<ul>
-		{#each filteredTodos as todo}
-			<li class={todo.completed && 'completed'}>{todo.todo}</li>
-		{/each}
-	</ul>
-{:else}
-	<p>No todos found.</p>
-{/if}
+{#await fetchData()}
+	<p>Loading...</p>
+{:then}
+	{#if filteredTodos.length > 0}
+		<ul>
+			{#each filteredTodos as todo (todo.id)}
+				<li class:completed={todo.completed}>
+					{todo.todo}
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<p>No todos found.</p>
+	{/if}
+{:catch error}
+	<p>Error: {error.message}</p>
+{/await}
 
 <style>
 	ul {
