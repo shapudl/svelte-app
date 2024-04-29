@@ -9,7 +9,6 @@
 	onMount(async () => {
 		const response = await fetch('https://dummyjson.com/todos');
 		const data = await response.json();
-		console.log(data.todos);
 		todos = data.todos;
 	});
 
